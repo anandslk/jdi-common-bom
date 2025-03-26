@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "lerna run dev",
     "build": "lerna run build",
-    "start": "lerna run start"
+    "start": "lerna run start",
+    "format": "prettier --write ."
   },
   "workspaces": [
     "packages/*"

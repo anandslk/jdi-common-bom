@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
 import { TextField, Box, Paper, Button, Stack, Alert } from "@mui/material";
-import { LoadingScreen } from "../components/LoadingScreen";
 import { ConfirmationScreen } from "../components/Confirmation";
 import { ResultsScreen } from "../components/Result";
 import { Dialog } from "../components/Dialog";
@@ -43,7 +42,7 @@ export const App: React.FC = () => {
 
   const handleChange = (
     key: keyof IFormState,
-    value: IFormState[keyof IFormState]
+    value: IFormState[keyof IFormState],
   ) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
@@ -51,7 +50,7 @@ export const App: React.FC = () => {
   const { isOpen, setIsOpen } = useConfirmations();
 
   // Track submission stage
-  const [stage, setStage] = useState<Stage>("form");
+  const [stage] = useState<Stage>("form");
 
   // --- Form Submission ---
   const handleFormSubmit = (): void => {

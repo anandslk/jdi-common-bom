@@ -9,8 +9,7 @@ import {
   TableCell,
   Button,
   CircularProgress,
-  TextField,
-  Grid,
+  Grid2,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +29,7 @@ const TaskList = () => {
   // Function to refresh status (simulated with random status change)
   const refreshStatus = (taskId: number) => {
     const newTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, status: getRandomStatus() } : task
+      task.id === taskId ? { ...task, status: getRandomStatus() } : task,
     );
     setTasks(newTasks);
   };
@@ -66,29 +65,29 @@ const TaskList = () => {
 
       {/* Form to Add New Task */}
       <Box sx={{ marginBottom: 3 }}>
-        <Grid container spacing={2}>
-          {/* <Grid item xs={6}>
+        <Grid2 container spacing={2}>
+          {/* <Grid2 size={{ xs: 6 }}>
             <TextField
               label="Task Name"
               fullWidth
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={{ xs: 6 }}>
             <TextField
               label="Part No."
               fullWidth
               value={partNo}
               onChange={(e) => setPartNo(e.target.value)}
             />
-          </Grid> */}
-          <Grid item xs={12}>
+          </Grid2> */}
+          <Grid2 size={{ xs: 12 }}>
             <Button variant="contained" color="primary" onClick={addTask}>
               Add Item
             </Button>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Box>
 
       {/* Task Table */}
