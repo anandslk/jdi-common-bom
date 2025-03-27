@@ -11,6 +11,30 @@ export const createMutationQuery = <T>(
   }),
 });
 
+export const createMutationParamQuery = <T, P extends Record<string, any>>(
+  url: string,
+  method: "POST" | "PUT" | "PATCH" = "POST",
+) => ({
+  query: ({ params, body }: { params?: P; body: T }) => {
+    let resolvedUrl = url;
+
+    // Replace URL placeholders with actual parameters
+    if (params) {
+      resolvedUrl = Object.entries(params).reduce(
+        (acc, [key, value]) =>
+          acc.replace(`:${key}`, encodeURIComponent(value)),
+        url,
+      );
+    }
+
+    return {
+      url: resolvedUrl,
+      method,
+      body,
+    };
+  },
+});
+
 export const createGetQuery = <T extends Record<string, any>>(url: string) => ({
   query: (params?: T) => {
     const queryString = params

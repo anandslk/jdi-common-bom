@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Typography,
@@ -11,52 +10,51 @@ import {
   CircularProgress,
   Grid2,
 } from "@mui/material";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { LineProgress } from "src/components/LineProgress";
+import {
+  useTaskListQuery,
+  useUpdateStatusMutation,
+} from "src/slices/apis/app.api";
+import { getErrorMessage, ITask } from "src/slices/apis/types";
 
 const TaskList = () => {
-  // Initial task data
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "567", partNo: "392", status: "processing" },
-    { id: 2, name: "849", partNo: "459", status: "failed" },
-    { id: 3, name: "483", partNo: "260", status: "success" },
-  ]);
+  const { data, refetch, isFetching } = useTaskListQuery({});
+  const [updateMutation, { isLoading }] = useUpdateStatusMutation();
 
   const navigate = useNavigate();
 
-  const [taskName, setTaskName] = useState("");
-  const [partNo, setPartNo] = useState("");
-
   // Function to refresh status (simulated with random status change)
-  const refreshStatus = (taskId: number) => {
-    const newTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, status: getRandomStatus() } : task,
-    );
-    setTasks(newTasks);
+  const refreshStatus = async (taskId: string) => {
+    const { data, error } = await updateMutation({
+      body: {
+        status: "processing",
+      },
+      params: {
+        id: taskId,
+      },
+    });
+
+    if (error) return toast.error(getErrorMessage(error));
+
+    toast.success(data.message);
+
+    refetch();
   };
 
   // Helper function to generate a random status
-  const getRandomStatus = () => {
-    const statuses = ["processing", "failed", "success"];
-    return statuses[Math.floor(Math.random() * statuses.length)];
-  };
+  // const getRandomStatus = () => {
+  //   const statuses = ["processing", "failed", "success"];
+  //   return statuses[Math.floor(Math.random() * statuses.length)];
+  // };
 
   // Add new task to the list
   const addTask = () => {
-    if (taskName && partNo) {
-      const newTask = {
-        id: tasks.length + 1,
-        name: taskName,
-        partNo: partNo,
-        status: "processing",
-      };
-      setTasks([...tasks, newTask]);
-      setTaskName("");
-      setPartNo("");
-    }
-
     navigate("/");
   };
 
+  if (isFetching) return <LineProgress />;
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
@@ -101,10 +99,10 @@ const TaskList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {tasks.map((task) => (
+          {data?.data?.map((task: ITask) => (
             <TableRow key={task.id}>
-              <TableCell>{task.name}</TableCell>
-              <TableCell>{task.partNo}</TableCell>
+              <TableCell>{task.parentPart}</TableCell>
+              <TableCell>{task.sourceOrg}</TableCell>
               <TableCell>
                 <Typography
                   variant="body2"
@@ -127,8 +125,8 @@ const TaskList = () => {
                     onClick={() => refreshStatus(task.id)}
                     disabled={task.status !== "processing"}
                   >
-                    {task.status !== "processing" ? (
-                      <CircularProgress size={24} color="secondary" />
+                    {isLoading ? (
+                      <CircularProgress size={24} color="inherit" />
                     ) : (
                       "Refresh Status"
                     )}

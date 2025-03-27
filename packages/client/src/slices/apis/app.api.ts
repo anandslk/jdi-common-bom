@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { createGetQuery, createMutationQuery, headers } from "./config";
+import {
+  createGetQuery,
+  createMutationParamQuery,
+  createMutationQuery,
+  headers,
+} from "./config";
 import { env } from "src/utils/env";
 import { IPostArgs } from "./types";
 
@@ -13,12 +18,24 @@ export const apiSlice = createApi({
 
   endpoints: (builder) => ({
     post: builder.mutation(createMutationQuery<IPostArgs>("/")),
-    // rdoList: builder.query<IRDOListRes, void>(createGetQuery("/rdo-list")),
     rdoList: builder.query(createGetQuery("/rdo-list")),
     orgList: builder.query(createGetQuery("/org-list")),
+    taskList: builder.query(createGetQuery("/tasks-list")),
+    updateStatus: builder.mutation(
+      createMutationParamQuery<{ status: string }, { id: string }>(
+        "/task/:id/status",
+        "PATCH",
+      ),
+    ),
   }),
 });
 
-export const { usePostMutation, useRdoListQuery, useOrgListQuery } = apiSlice;
+export const {
+  usePostMutation,
+  useRdoListQuery,
+  useOrgListQuery,
+  useTaskListQuery,
+  useUpdateStatusMutation,
+} = apiSlice;
 
 export const {} = apiSlice;

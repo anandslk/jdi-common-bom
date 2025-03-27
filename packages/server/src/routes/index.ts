@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { ICustomResponse } from "src/middlewares/response.middleware";
+import { v4 as uuidv4 } from "uuid";
 
 export const router = express.Router();
 
@@ -213,6 +214,39 @@ router.get("/org-list", (_: Request, res: Response) => {
 
 /**
  * @swagger
+ * /org-list:
+ *   get:
+ *     summary: Retrieve a list of Organizations
+ *     description: Returns a list of all available organizations.
+ *     responses:
+ *       200:
+ *         description: A list of organizations.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Data found successfully!"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+router.get("/tasks-list", (_: Request, res: Response) => {
+  (res as ICustomResponse).response({
+    status: 200,
+    message: "Retrieved stored data successfully",
+    data: tempDataStore,
+  });
+});
+
+/**
+ * @swagger
  * /:
  *   post:
  *     summary: Save data to the server
@@ -271,6 +305,25 @@ router.get("/org-list", (_: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
+
+interface DataEntry {
+  id: string;
+  parentPart: string;
+  sourceOrg: string;
+  plants: string[];
+  status: "processing" | "failed" | "success";
+}
+
+const tempDataStore: DataEntry[] = [
+  {
+    id: "0f51adf6-589c-4d01-931d-dfc7769423f2",
+    parentPart: "765765",
+    sourceOrg: "481",
+    plants: ["AO1", "AT1"],
+    status: "processing",
+  },
+];
+
 router.post("/", (req: Request, res: Response) => {
   const requiredFields = ["parentPart", "sourceOrg", "plants"];
   const missingFields = requiredFields.filter((field) => !req.body[field]);
@@ -283,13 +336,53 @@ router.post("/", (req: Request, res: Response) => {
     return;
   }
 
+  const newData: DataEntry = {
+    id: uuidv4(),
+    parentPart: req.body.parentPart,
+    sourceOrg: req.body.sourceOrg,
+    plants: req.body.plants,
+    status: "processing",
+  };
+
+  tempDataStore.push(newData);
+
   (res as ICustomResponse).response({
     status: 200,
     message: "Process Initiated successfully",
-    data: {
-      parentPart: req.body.parentPart,
-      sourceOrg: req.body.sourceOrg,
-      plants: req.body.plants,
-    },
+    data: newData,
+  });
+});
+
+// Route to update the status of an entry
+router.patch("/task/:id/status", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // Ensure the provided status is valid
+  if (!["processing", "failed", "success"].includes(status)) {
+    res.status(400).json({
+      status: 400,
+      message:
+        "Invalid status value. Allowed values: processing, failed, success.",
+    });
+    return;
+  }
+
+  const entry = tempDataStore.find((item) => item.id === id);
+
+  if (!entry) {
+    res.status(404).json({
+      status: 404,
+      message: "Entry not found.",
+    });
+    return;
+  }
+
+  entry.status = status as "processing" | "failed" | "success";
+
+  res.json({
+    status: 200,
+    message: "Status updated successfully.",
+    data: entry,
   });
 });

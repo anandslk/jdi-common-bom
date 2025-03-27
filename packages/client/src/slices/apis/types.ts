@@ -59,3 +59,11 @@ export interface IRDOListRes {
   message: string;
   data: string[];
 }
+
+export interface ITask {
+  id: string;
+  parentPart: string;
+  sourceOrg: string;
+  plants: string[];
+  status: "processing" | "failed" | "success"; 
+}
