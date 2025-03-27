@@ -54,7 +54,7 @@ export interface IPostArgs {
   plants: string[];
 }
 
-export interface IRDOListRes {
+export interface IRDOORGRes {
   status: number;
   message: string;
   data: string[];
@@ -65,5 +65,5 @@ export interface ITask {
   parentPart: string;
   sourceOrg: string;
   plants: string[];
-  status: "processing" | "failed" | "success"; 
+  status: "processing" | "failed" | "success";
 }

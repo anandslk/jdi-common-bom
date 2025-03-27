@@ -6,7 +6,7 @@ import {
   headers,
 } from "./config";
 import { env } from "src/utils/env";
-import { IPostArgs } from "./types";
+import { IPostArgs, IRDOORGRes } from "./types";
 
 export const apiSlice = createApi({
   reducerPath: "api",
@@ -18,8 +18,8 @@ export const apiSlice = createApi({
 
   endpoints: (builder) => ({
     post: builder.mutation(createMutationQuery<IPostArgs>("/")),
-    rdoList: builder.query(createGetQuery("/rdo-list")),
-    orgList: builder.query(createGetQuery("/org-list")),
+    rdoList: builder.query<IRDOORGRes, {}>(createGetQuery("/rdo-list")),
+    orgList: builder.query<IRDOORGRes, {}>(createGetQuery("/org-list")),
     taskList: builder.query(createGetQuery("/tasks-list")),
     updateStatus: builder.mutation(
       createMutationParamQuery<{ status: string }, { id: string }>(

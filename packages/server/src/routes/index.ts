@@ -97,9 +97,11 @@ router.get("/rdo-list", (_: Request, res: Response) => {
     "HCE",
   ];
 
-  res
-    .status(200)
-    .json({ status: 200, message: "Data found successfully!", data: RDOList });
+  (res as ICustomResponse).response({
+    status: 200,
+    message: "Data found successfully!",
+    data: RDOList,
+  });
 });
 
 /**
@@ -207,9 +209,11 @@ router.get("/org-list", (_: Request, res: Response) => {
     "VLO",
   ];
 
-  res
-    .status(200)
-    .json({ status: 200, message: "Data found successfully!", data: orgList });
+  (res as ICustomResponse).response({
+    status: 200,
+    message: "Data found successfully!",
+    data: orgList,
+  });
 });
 
 /**
@@ -360,7 +364,7 @@ router.patch("/task/:id/status", (req: Request, res: Response) => {
 
   // Ensure the provided status is valid
   if (!["processing", "failed", "success"].includes(status)) {
-    res.status(400).json({
+    (res as ICustomResponse).response({
       status: 400,
       message:
         "Invalid status value. Allowed values: processing, failed, success.",
@@ -371,7 +375,7 @@ router.patch("/task/:id/status", (req: Request, res: Response) => {
   const entry = tempDataStore.find((item) => item.id === id);
 
   if (!entry) {
-    res.status(404).json({
+    (res as ICustomResponse).response({
       status: 404,
       message: "Entry not found.",
     });
@@ -380,7 +384,7 @@ router.patch("/task/:id/status", (req: Request, res: Response) => {
 
   entry.status = status as "processing" | "failed" | "success";
 
-  res.json({
+  (res as ICustomResponse).response({
     status: 200,
     message: "Status updated successfully.",
     data: entry,
