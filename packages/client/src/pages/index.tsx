@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { TextField, Box, Paper, Button, Stack, Alert } from "@mui/material";
 import { ConfirmationScreen } from "../components/Confirmation";
 import { ResultsScreen } from "../components/Result";
@@ -53,10 +53,8 @@ export const App: React.FC = () => {
   const [stage] = useState<Stage>("form");
 
   // --- Form Submission ---
-  const handleFormSubmit = (): void => {
-    // toast.error("Part is not Released")
-    // toast.error("Part does not belong to the selected source organization")
-    // return
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
     const newErrors: FormErrors = {};
 
     if (!formState.parentParts.trim())
@@ -127,61 +125,65 @@ export const App: React.FC = () => {
             opacity: stage === "searching" ? 0.6 : 1,
           }}
         >
-          <Stack spacing={3}>
-            <TextField
-              label="Parent item(s) to Assign"
-              variant="outlined"
-              value={formState.parentParts}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange("parentParts", e.target.value)
-              }
-              error={!!errors.parentParts}
-              helperText={errors.parentParts}
-              fullWidth
-              disabled={stage === "searching"}
-            />
-            <TextField
-              label="Source Organization"
-              variant="outlined"
-              value={formState.sourceOrg}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleChange("sourceOrg", e.target.value)
-              }
-              error={!!errors.sourceOrg}
-              helperText={errors.sourceOrg}
-              fullWidth
-              disabled={stage === "searching"}
-            />
-
-            <DropdownMultiSelect
-              selectedItems={formState.plants}
-              onChange={(newSelectedItems) =>
-                handleChange("plants", newSelectedItems)
-              }
-              disabled={stage === "searching"}
-            />
-
-            {errors.plants && <Alert severity="error">{errors.plants}</Alert>}
-
-            <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleFormSubmit}
-                disabled={stage === "searching"}
-              >
-                Submit
-              </Button>
-              <Button
+          <form onSubmit={handleFormSubmit}>
+            <Stack spacing={3}>
+              <TextField
+                label="Parent item(s) to Assign"
                 variant="outlined"
-                color="secondary"
-                onClick={handleCancel}
+                value={formState.parentParts}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleChange("parentParts", e.target.value)
+                }
+                error={!!errors.parentParts}
+                helperText={errors.parentParts}
+                fullWidth
                 disabled={stage === "searching"}
-              >
-                Cancel
-              </Button>
+              />
+              <TextField
+                label="Source Organization"
+                variant="outlined"
+                value={formState.sourceOrg}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleChange("sourceOrg", e.target.value)
+                }
+                error={!!errors.sourceOrg}
+                helperText={errors.sourceOrg}
+                fullWidth
+                disabled={stage === "searching"}
+              />
+
+              <DropdownMultiSelect
+                selectedItems={formState.plants}
+                onChange={(newSelectedItems) =>
+                  handleChange("plants", newSelectedItems)
+                }
+                disabled={stage === "searching"}
+              />
+
+              {errors.plants && <Alert severity="error">{errors.plants}</Alert>}
+
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={stage === "searching"}
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleCancel}
+                  disabled={stage === "searching"}
+                >
+                  Cancel
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
+          </form>
         </Paper>
 
         {/* <LoadingScreen message="Assigning items and commoning required parts..." /> */}
