@@ -65,5 +65,5 @@ export interface ITask {
   parentPart: string;
   sourceOrg: string;
   plants: string[];
-  status: "processing" | "failed" | "success"; 
+  status: "processing" | "failed" | "success";
 }

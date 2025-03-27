@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { LineProgress } from "src/components/LineProgress";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "react-hot-toast";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   const queryClient = new QueryClient();
@@ -18,9 +20,11 @@ export const Providers = ({ children }: { children: ReactNode }) => {
         <PersistGate loading={null} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             <Suspense fallback={<LineProgress />}>
-              <Toaster position="top-center" reverseOrder={false} />
+              <DndProvider backend={HTML5Backend}>
+                <Toaster position="top-center" reverseOrder={false} />
 
-              {children}
+                {children}
+              </DndProvider>
             </Suspense>
           </QueryClientProvider>
         </PersistGate>
