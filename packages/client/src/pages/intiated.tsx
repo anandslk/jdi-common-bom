@@ -1,11 +1,7 @@
-import { Box, Typography, Link } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const ProcessInitiated = () => {
-  const history = useNavigate();
-
-  const handleClick = () => history("/");
-
   return (
     <Box
       sx={{
@@ -32,9 +28,10 @@ const ProcessInitiated = () => {
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
           Your task has been successfully started.
         </Typography>
-        <Link
-          href="#"
-          onClick={handleClick}
+
+        <Box
+          component={Link}
+          to="/"
           sx={{
             color: "#007BFF",
             fontSize: 16,
@@ -45,7 +42,7 @@ const ProcessInitiated = () => {
           }}
         >
           Click here to create another task
-        </Link>
+        </Box>
       </Box>
     </Box>
   );
