@@ -44,7 +44,7 @@ export function Dialog({
           >
             <motion.div
               ref={dialogRef}
-              className="bg-white rounded-2xl p-6 shadow-xl min-w-[50%] max-w-[80%]"
+              className="bg-white rounded-2xl p-6 shadow-xl min-w-[70%] md:min-w-[40%] max-w-[60%]"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
