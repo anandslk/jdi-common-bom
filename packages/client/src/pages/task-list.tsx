@@ -8,7 +8,7 @@ import {
   TableCell,
   Button,
   CircularProgress,
-  Grid2,
+  Grid,
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -63,29 +63,29 @@ const TaskList = () => {
 
       {/* Form to Add New Task */}
       <Box sx={{ marginBottom: 3 }}>
-        <Grid2 container spacing={2}>
-          {/* <Grid2 size={{ xs: 6 }}>
+        <Grid container spacing={2}>
+          {/* <Grid size={{ xs: 6 }}>
             <TextField
               label="Task Name"
               fullWidth
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 6 }}>
+          </Grid>
+          <Grid size={{ xs: 6 }}>
             <TextField
               label="Part No."
               fullWidth
               value={partNo}
               onChange={(e) => setPartNo(e.target.value)}
             />
-          </Grid2> */}
-          <Grid2 size={{ xs: 12 }}>
+          </Grid> */}
+          <Grid size={{ xs: 12 }}>
             <Button variant="contained" color="primary" onClick={addTask}>
               Add Item
             </Button>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </Box>
 
       {/* Task Table */}
