@@ -90,7 +90,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#eef2f6" }}>
+    <Box sx={{ minHeight: "calc(100vh - 65px)", backgroundColor: "#eef2f6" }}>
       <Dialog
         isOpen={isOpen}
         title="Confirm Your Submission"
