@@ -86,7 +86,7 @@ export const App: React.FC = () => {
 
     setIsOpen(false);
     toast.success(data.message);
-    setTimeout(() => navigate("/initiated"), 500);
+    setTimeout(() => navigate("/tasks"), 500);
   };
 
   return (

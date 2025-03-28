@@ -7,7 +7,6 @@ import path from "path";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 
 import { router } from "./routes";
@@ -19,12 +18,14 @@ import swaggerJSDoc from "swagger-jsdoc";
 import { swaggerOptions } from "./swaggerConfig";
 import swaggerUi from "swagger-ui-express";
 import { home, notFound } from "./templates";
+import { limiter } from "./utils";
 
 const app: Express = express();
 
 // ✅ Initialize Swagger first
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(responseHandler);
 
 // Security middleware
 app.use(helmet());
@@ -35,12 +36,8 @@ app.use(
     allowedHeaders: [...config.cors.allowedHeaders],
   }),
 );
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  }),
-);
+
+app.use(limiter);
 
 // Request parsing middleware
 app.use(express.json());
@@ -48,7 +45,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(responseHandler);
 
 // Logging middleware
 app.use(
