@@ -7,6 +7,7 @@ import { TypedUseSelectorHook } from "react-redux";
 import { apiSlice } from "src/slices/apis/app.api";
 
 import { authReducer } from "src/slices/reducers/auth.reducer";
+import { droppedObjectReducer } from "./droppedObjectSlice";
 
 import { persistReducer, persistStore } from "redux-persist";
 
@@ -29,6 +30,7 @@ const persistConfig = {
 
 const reducer = combineReducers({
   auth: authReducer,
+  droppedObject: droppedObjectReducer,
 
   [apiSlice.reducerPath]: apiSlice.reducer,
 });

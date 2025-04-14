@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 
 export const env = Object.freeze({
   API_URL: process.env.API_URL,
+  WIDGET_ENTRY: process.env.WIDGET_ENTRY,
   NODE_ENV: process.env.NODE_ENV,
 } as const);
 

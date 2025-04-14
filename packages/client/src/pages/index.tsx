@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { TextField, Box, Paper, Button, Stack, Alert } from "@mui/material";
 import { ConfirmationScreen } from "../components/Confirmation";
 import { ResultsScreen } from "../components/Result";
@@ -16,17 +16,11 @@ interface FormErrors {
   plants?: string;
 }
 
-type Stage = "form" | "searching" | "confirmation" | "assigning" | "results";
-
-export const App: React.FC = () => {
+export const JdiBomPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Form fields and error state
-  const [errors, setErrors] = useState<FormErrors>({
-    parentParts: "",
-    sourceOrg: "",
-    plants: "",
-  });
+  const [errors, setErrors] = useState<Partial<FormErrors>>({});
 
   type IFormState = {
     parentParts: string;
@@ -42,15 +36,12 @@ export const App: React.FC = () => {
 
   const handleChange = (
     key: keyof IFormState,
-    value: IFormState[keyof IFormState],
+    value: IFormState[keyof IFormState]
   ) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
 
   const { isOpen, setIsOpen } = useConfirmations();
-
-  // Track submission stage
-  const [stage] = useState<Stage>("form");
 
   // --- Form Submission ---
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
@@ -90,116 +81,107 @@ export const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "calc(100vh - 65px)", backgroundColor: "#eef2f6" }}>
-      <Dialog
-        isOpen={isOpen}
-        title="Confirm Your Submission"
-        onSubmit={handleConfirmationSubmit}
-        onCancel={handleCancel}
-        disabled={isLoading}
-      >
-        <ConfirmationScreen
-          parentParts={formState.parentParts}
-          sourceOrg={formState.sourceOrg}
-          selectedItems={formState.plants}
-        />
-      </Dialog>
-
-      <Box
-        sx={{
-          padding: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 4,
-          minHeight: "calc(100vh - 200px)",
-        }}
-      >
-        <Paper
-          sx={{
-            padding: 4,
-            width: "100%",
-            maxWidth: 600,
-            borderRadius: 4,
-            boxShadow: 3,
-            opacity: stage === "searching" ? 0.6 : 1,
-          }}
+    <>
+      <Box sx={{ minHeight: "calc(100vh - 65px)", backgroundColor: "#eef2f6" }}>
+        <Dialog
+          isOpen={isOpen}
+          title="Confirm Your Submission"
+          onSubmit={handleConfirmationSubmit}
+          onCancel={handleCancel}
+          disabled={isLoading}
         >
-          <form onSubmit={handleFormSubmit}>
-            <Stack spacing={3}>
-              <TextField
-                label="Parent item(s) to Assign"
-                variant="outlined"
-                value={formState.parentParts}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleChange("parentParts", e.target.value)
-                }
-                error={!!errors.parentParts}
-                helperText={errors.parentParts}
-                fullWidth
-                disabled={stage === "searching"}
-              />
-              <TextField
-                label="Source Organization"
-                variant="outlined"
-                value={formState.sourceOrg}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleChange("sourceOrg", e.target.value)
-                }
-                error={!!errors.sourceOrg}
-                helperText={errors.sourceOrg}
-                fullWidth
-                disabled={stage === "searching"}
-              />
-
-              <DropdownMultiSelect
-                selectedItems={formState.plants}
-                onChange={(newSelectedItems) =>
-                  handleChange("plants", newSelectedItems)
-                }
-                disabled={stage === "searching"}
-              />
-
-              {errors.plants && <Alert severity="error">{errors.plants}</Alert>}
-
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={stage === "searching"}
-                >
-                  Submit
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleCancel}
-                  disabled={stage === "searching"}
-                >
-                  Cancel
-                </Button>
-              </Stack>
-            </Stack>
-          </form>
-        </Paper>
-
-        {/* <LoadingScreen message="Assigning items and commoning required parts..." /> */}
-
-        {/* Results Screen */}
-        {stage === "results" && (
-          <ResultsScreen
+          <ConfirmationScreen
             parentParts={formState.parentParts}
             sourceOrg={formState.sourceOrg}
             selectedItems={formState.plants}
-            onBack={handleCancel}
           />
-        )}
+        </Dialog>
+
+        <Box
+          sx={{
+            padding: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+            minHeight: "calc(100vh - 200px)",
+          }}
+        >
+          <Paper
+            sx={{
+              padding: 4,
+              width: "100%",
+              maxWidth: 600,
+              borderRadius: 4,
+              boxShadow: 3,
+            }}
+          >
+            <form onSubmit={handleFormSubmit}>
+              <Stack spacing={3}>
+                <TextField
+                  label="Parent item(s) to Assign"
+                  variant="outlined"
+                  value={formState.parentParts}
+                  onChange={(e) => handleChange("parentParts", e.target.value)}
+                  error={!!errors.parentParts}
+                  helperText={errors.parentParts}
+                  fullWidth
+                />
+                <TextField
+                  label="Source Organization"
+                  variant="outlined"
+                  value={formState.sourceOrg}
+                  onChange={(e) => handleChange("sourceOrg", e.target.value)}
+                  error={!!errors.sourceOrg}
+                  helperText={errors.sourceOrg}
+                  fullWidth
+                />
+
+                <DropdownMultiSelect
+                  selectedItems={formState.plants}
+                  onChange={(newSelectedItems) =>
+                    handleChange("plants", newSelectedItems)
+                  }
+                  disabled={false}
+                />
+
+                {errors.plants && (
+                  <Alert severity="error">{errors.plants}</Alert>
+                )}
+
+                <Stack direction="row" spacing={2} justifyContent="flex-end">
+                  <Button type="submit" variant="contained" color="primary">
+                    Submit
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              </Stack>
+            </form>
+          </Paper>
+
+          {/* <LoadingScreen message="Assigning items and commoning required parts..." /> */}
+
+          {/* Results Screen */}
+          {false && (
+            <ResultsScreen
+              parentParts={formState.parentParts}
+              sourceOrg={formState.sourceOrg}
+              selectedItems={formState.plants}
+              onBack={handleCancel}
+            />
+          )}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
-export default App;
+export default JdiBomPage;
