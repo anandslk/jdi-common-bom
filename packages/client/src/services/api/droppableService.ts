@@ -3,6 +3,7 @@ import { setInitialDroppedObjectData } from "../../store/droppedObjectSlice";
 import api from "../../utils/api";
 import { MSG_MULTIPLE_OBJECTS_DROPPED } from "../../utils/toastMessages";
 import { store } from "src/store";
+import axios from "axios";
 
 // 1. Export a global variable to hold the collabSpaceTitle
 export let globalCollabSpaceTitles: any = [];
@@ -26,7 +27,7 @@ export function processCollabSpace(collabspace: any) {
   }
   console.log(
     "[droppableService] Updated collabSpaceTitles array:",
-    globalCollabSpaceTitles,
+    globalCollabSpaceTitles
   );
 }
 
@@ -34,7 +35,7 @@ export const initializeDroppableArea = (
   droppableContainer: any,
   handleDrop: any,
   dispatch: any,
-  showErrorToast: any,
+  showErrorToast: any
 ) => {
   console.log("[initializeDroppableArea] 🚀 Running...");
   (window as any).require(
@@ -65,11 +66,11 @@ export const initializeDroppableArea = (
             dispatch(
               setInitialDroppedObjectData({
                 initialDraggedData: parsedData, // ✅ Only update if different
-              }),
+              })
             );
           } else {
             console.log(
-              "[initializeDroppableArea] Data unchanged. Skipping dispatch.",
+              "[initializeDroppableArea] Data unchanged. Skipping dispatch."
             );
           }
           handleDrop(dataItems);
@@ -85,7 +86,7 @@ export const initializeDroppableArea = (
           droppableContainer.classList.remove("drag-over");
         },
       });
-    },
+    }
   );
 };
 
@@ -155,7 +156,7 @@ export const getDroppedObjectDetails = async ({ dataItems }: any) => {
       };
     } else {
       throw new Error(
-        `[Object Details] HTTP error! status: ${response.status}`,
+        `[Object Details] HTTP error! status: ${response.status}`
       );
     }
   } catch (error: any) {
@@ -216,8 +217,16 @@ export const SecurityContext = async () => {
     options: [],
     defaultValue: "",
   };
+  let urlObjWAF = `https://oi000186152-us1-space.3dexperience.3ds.com/enovia/resources/modeler/pno/person?current=true&select=collabspaces&select=preferredcredentials&select=email`;
 
-  let urlObjWAF = `https://oi000186152-us1-space.3dexperience.3ds.com/enovia /resources/modeler/pno/person?current=true&select=collabspaces&select=preferredcredentials&select=email`;
+  try {
+    const res = await axios.get(urlObjWAF);
+
+    console.log("resssssssss", res);
+  } catch (error) {
+    console.log("resssssssss  errrrrrrrrr", error);
+  }
+
   let response = await callwebService("GET", urlObjWAF, "");
 
   console.log("Response for Preferences:", response);

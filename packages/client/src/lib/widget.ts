@@ -26,7 +26,7 @@ const Widget = function () {
     localStorage.setItem("_prefs_4_Widget_", JSON.stringify(prefs));
   };
 
-//   this.uwaUrl = "./";
+  //   this.uwaUrl = "./";
 
   this.addEvent = (event, callback) => {
     events[event] = callback;
@@ -100,7 +100,6 @@ const initRequireModules = function () {
   });
 };
 
-
 export function initWidget(cbOk, cbError) {
   // console.log("[initWidget] Called.");
   const waitFor = function (whatToWait, maxTry, then) {
@@ -111,7 +110,9 @@ export function initWidget(cbOk, cbError) {
     } else if (maxTry === 0) {
       document.body.innerHTML =
         "Error while trying to load widget. See console for details";
-        console.error(`[initWidget] ${whatToWait} didn't load after maximum tries.`);
+      console.error(
+        `[initWidget] ${whatToWait} didn't load after maximum tries.`
+      );
       throw new Error(`${whatToWait} didn't load`);
     } else {
       setTimeout(waitFor, 200, whatToWait, --maxTry, then);
@@ -135,16 +136,22 @@ export function initWidget(cbOk, cbError) {
         oReq.send();
         // console.log("[initWidget] XMLHttpRequest sent for require.js");
       } catch (err) {
-        console.error("[initWidget] Error sending XMLHttpRequest for require.js", err);
+        console.error(
+          "[initWidget] Error sending XMLHttpRequest for require.js",
+          err
+        );
         reject(err);
       }
     });
   };
   const updatePublicPath = () => {
-    __webpack_public_path__ = widget.uwaUrl.substring(
+    const webpackPath = widget.uwaUrl.substring(
       0,
       widget.uwaUrl.lastIndexOf("/") + 1
     );
+
+    console.log("webpackPath....................", webpackPath);
+    window.__webpack_public_path__ = webpackPath;
   };
 
   if (window.widget) {
