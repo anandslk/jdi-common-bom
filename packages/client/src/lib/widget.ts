@@ -1,12 +1,13 @@
 // @ts-nocheck
-const Widget: any = function () {
-  const events: any = {};
+
+const Widget = function () {
+  const events = {};
   let title = "";
 
   const widgetUrl = window.location.href;
 
   const prefs = (() => {
-    let prefsLocal: any = localStorage.getItem("_prefs_4_Widget_");
+    let prefsLocal = localStorage.getItem("_prefs_4_Widget_");
     if (prefsLocal) {
       try {
         prefsLocal = JSON.parse(prefsLocal);
@@ -25,9 +26,9 @@ const Widget: any = function () {
     localStorage.setItem("_prefs_4_Widget_", JSON.stringify(prefs));
   };
 
-  //   this.uwaUrl = "./";
+//   this.uwaUrl = "./";
 
-  this.addEvent = (event: any, callback: any) => {
+  this.addEvent = (event, callback) => {
     events[event] = callback;
     if (event === "onLoad") {
       if (document.readyState === "loading") {
@@ -38,48 +39,48 @@ const Widget: any = function () {
     }
   };
 
-  this.addPreference = (pref: any) => {
+  this.addPreference = (pref) => {
     pref.value = pref.defaultValue;
     prefs[pref.name] = pref;
     _savePrefsLocalStorage();
   };
 
-  this.getPreference = (prefName: any) => {
+  this.getPreference = (prefName) => {
     return prefs[prefName];
   };
 
   this.getUrl = () => {
     return widgetUrl;
   };
-  this.getValue = (prefName: any) => {
+  this.getValue = (prefName) => {
     return prefs[prefName] === undefined ? undefined : prefs[prefName].value;
   };
 
-  this.setValue = (prefName: any, value: any) => {
+  this.setValue = (prefName, value) => {
     prefs[prefName].value = value;
     _savePrefsLocalStorage();
   };
 
-  this.setIcon = (icon: any) => {};
-  this.setTitle = (t: any) => {
+  this.setIcon = (icon) => {};
+  this.setTitle = (t) => {
     title = t;
     document.title = title;
   };
-  this.dispatchEvent = (...args: any) => {};
+  this.dispatchEvent = (...args) => {};
 };
 
-const UWA: any = function () {
-  this.log = (args: any) => {
+const UWA = function () {
+  this.log = (args) => {
     /* eslint no-console:off */
   };
 };
 
 const initRequireModules = function () {
   define("DS/TagNavigatorProxy/TagNavigatorProxy", [], () => {
-    const TagNavigatorProxy: any = function () {
+    const TagNavigatorProxy = function () {
       this.createProxy = () => {
         return {
-          addEvent: (name: any, event: any) => {},
+          addEvent: (name, event) => {},
           setSubjectsTags: (subject) => {},
         };
       };
@@ -87,11 +88,11 @@ const initRequireModules = function () {
     return new TagNavigatorProxy();
   });
   define("DS/PlatformAPI/PlatformAPI", [], () => {
-    const PlatformAPI: any = function () {
+    const PlatformAPI = function () {
       this.getUser = () => {
         return {};
       };
-      this.subscribe = (topic: any, callback: any) => {
+      this.subscribe = (topic, callback) => {
         return { topic, callback };
       };
     };
@@ -99,9 +100,10 @@ const initRequireModules = function () {
   });
 };
 
-export function initWidget(cbOk: any, cbError: any) {
+
+export function initWidget(cbOk, cbError) {
   // console.log("[initWidget] Called.");
-  const waitFor = function (whatToWait: any, maxTry: any, then: any) {
+  const waitFor = function (whatToWait, maxTry, then) {
     // console.log(`[initWidget] waitFor: Checking for ${whatToWait}, maxTry remaining: ${maxTry}`);
     if (typeof window[whatToWait] !== "undefined") {
       // console.log(`[initWidget] ${whatToWait} is defined.`);
@@ -109,9 +111,7 @@ export function initWidget(cbOk: any, cbError: any) {
     } else if (maxTry === 0) {
       document.body.innerHTML =
         "Error while trying to load widget. See console for details";
-      console.error(
-        `[initWidget] ${whatToWait} didn't load after maximum tries.`,
-      );
+        console.error(`[initWidget] ${whatToWait} didn't load after maximum tries.`);
       throw new Error(`${whatToWait} didn't load`);
     } else {
       setTimeout(waitFor, 200, whatToWait, --maxTry, then);
@@ -122,7 +122,7 @@ export function initWidget(cbOk: any, cbError: any) {
     // console.log("[initWidget] loadRequire called. Loading assets/lib/require.js");
     return new Promise((resolve, reject) => {
       const oReq = new XMLHttpRequest();
-      oReq.addEventListener("load", (resp: any) => {
+      oReq.addEventListener("load", (resp) => {
         // console.log("[initWidget] require.js loaded successfully.");
         const script = document.createElement("script"); // Make a script DOM node
         script.innerHTML = resp.target.response; // Set it's src to the provided URL
@@ -135,39 +135,36 @@ export function initWidget(cbOk: any, cbError: any) {
         oReq.send();
         // console.log("[initWidget] XMLHttpRequest sent for require.js");
       } catch (err) {
-        console.error(
-          "[initWidget] Error sending XMLHttpRequest for require.js",
-          err,
-        );
+        console.error("[initWidget] Error sending XMLHttpRequest for require.js", err);
         reject(err);
       }
     });
   };
   const updatePublicPath = () => {
-    __webpack_public_path__ = (window as any).widget.uwaUrl.substring(
+    __webpack_public_path__ = widget.uwaUrl.substring(
       0,
-      (window as any).widget.uwaUrl.lastIndexOf("/") + 1,
+      widget.uwaUrl.lastIndexOf("/") + 1
     );
   };
 
-  if ((window as any).widget) {
-    // console.log("[initWidget] (window as any).widget exists. Updating public path and calling cbOk.");
+  if (window.widget) {
+    // console.log("[initWidget] window.widget exists. Updating public path and calling cbOk.");
     updatePublicPath();
-    cbOk((window as any).widget);
-  } else if (!(window as any).UWA) {
-    // console.log("[initWidget] (window as any).widget not found and UWA is undefined. Creating new instances.");
+    cbOk(widget);
+  } else if (!window.UWA) {
+    // console.log("[initWidget] window.widget not found and UWA is undefined. Creating new instances.");
     // outside of 3DDashboard
-    (window as any).widget = new Widget();
-    (window as any).UWA = new UWA();
+    window.widget = new Widget();
+    window.UWA = new UWA();
     loadRequire().then(() => {
       initRequireModules();
     });
     waitFor("requirejs", 10, () => {
       // console.log("[initWidget] After waiting, calling cbOk with new widget.");
-      cbOk((window as any).widget);
+      cbOk(window.widget);
     });
   } else {
-    // console.log("[initWidget] (window as any).widget not found but UWA exists. Waiting for widget injection.");
+    // console.log("[initWidget] window.widget not found but UWA exists. Waiting for widget injection.");
     // in 3DDashboard
     try {
       // sometime (actually, often), dashboard takes time to inject widget object
@@ -178,8 +175,8 @@ export function initWidget(cbOk: any, cbError: any) {
         () => {
           updatePublicPath();
           // console.log("[initWidget] Widget found after waiting. Calling cbOk.");
-          cbOk((window as any).widget);
-        },
+          cbOk(widget);
+        }
       );
     } catch (error) {
       console.error(error);
